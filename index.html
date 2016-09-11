@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Text Input</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="style.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-fixed-top navbar-dark bg-inverse">
+      <a class="navbar-brand" href="#">Interactive Device Design: Text Input</a>
+    </nav>
+
+    <div class="container">
+
+      <div id='main' class="starter-template">
+        
+      </div>
+
+    </div><!-- /.container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/js/tether.min.js" integrity="sha384-Plbmg8JY28KFelvJVai01l8WyZzrYWG825m+cZ0eDDS1f7d/js6ikvy1+X+guPIB" crossorigin="anonymous"></script>
+    <script src="js/bootstrap.min.js"></script>
+    
+    
+    <script>
+     var sock = null;
+     var ellog = null;
+      
+     var textbox = $('<div id="text-box"></div>');
+     
+     window.onload = function() {
+
+        var wsuri;
+        ellog = document.getElementById('log');
+
+        if (window.location.protocol === "file:") {
+           wsuri = "ws://localhost:9000";
+        } else {
+           wsuri = "ws://" + window.location.hostname + ":9000";
+        }
+
+        if ("WebSocket" in window) {
+           sock = new WebSocket(wsuri);
+        } else if ("MozWebSocket" in window) {
+           sock = new MozWebSocket(wsuri);
+        } else {
+           log("Browser does not support WebSocket!");
+        }
+
+        if (sock) {
+           sock.onopen = function() {
+              
+           }
+
+           sock.onclose = function(e) {
+              
+           }
+
+           sock.onmessage = function(e) {
+              var d = $.parseJSON(e.data);
+              console.log( d );
+              var i = d[0];
+              var j = d[1];
+              var k = d[2];
+              
+              if( i==-1 && j==-1 && k==-1 ){
+                $('.highlight').removeClass('highlight');
+              }
+              else if( i>=0 && j>=0 && k>=0 ){
+                $('.highlight').removeClass('highlight');
+                $('.i'+i+'.j'+j+'.k'+k).addClass('highlight');
+                
+                var n = k + 3*j + 9*i;
+                var c;
+                if( n == 26 ){
+                  c = ' ';
+                }else{
+                  c = String.fromCharCode(97 + n);
+                }
+                
+                var t = textbox.text();
+                textbox.text( t+c );
+              }
+              else if( i>=0 && j>=0 ){
+                $('.highlight').removeClass('highlight');
+                $('.i'+i+'.j'+j).addClass('highlight');
+              }
+              else if( i>=0 && k>=0 ){
+                $('.highlight').removeClass('highlight');
+                $('.i'+i+'.k'+k).addClass('highlight');
+              }
+              else if( j>=0 && k>=0 ){
+                $('.highlight').removeClass('highlight');
+                $('.j'+j+'.k'+k).addClass('highlight');
+              }
+              else if( i>=0 ){
+                $('.highlight').removeClass('highlight');
+                $('.i'+i).addClass('highlight');
+              }
+              else if( j>=0 ){
+                $('.highlight').removeClass('highlight');
+                $('.j'+j).addClass('highlight');
+              }
+              else if( k>=0 ){
+                $('.highlight').removeClass('highlight');
+                $('.k'+k).addClass('highlight');
+              }
+             
+           }
+        }
+     };
+    
+    
+    $( document ).ready(function() {
+        console.log( "document loaded" );
+        var container = $('#main');
+        container.append( textbox );
+        
+        for(var i=0;i<4;i++){
+          var row = $('<div class="row"></div>');
+          for(var j=0;j<4;j++){
+            if( j == 0 ){
+              column = $('<div class="col-md-2 col-sm-2"></div>');
+            }else{
+              column = $('<div class="col-md-3 col-sm-3"></div>');
+              var subsection = $('<div class="row"></div>');
+              column.append( subsection );
+            }
+            if( j == 0 ){
+
+            }
+            else if ( i == 0 ){
+            
+            }
+            else{
+              for(var k=0;k<3;k++ ){
+                var n = k + 3*(j-1) + 9*(i-1);
+                var c;
+                if( n == 26 ){
+                  c = '_';
+                }else{
+                  c = String.fromCharCode(97 + n);
+                }
+                
+                var icolor = "red";
+                if( i-1 == 0 ){
+                  icolor = "red";
+                }
+                else if( i-1 == 1 ){
+                  icolor = "green";
+                }
+                else if( i-1 == 2 ){
+                  icolor = "blue";
+                }
+                
+                var jcolor = "red";
+                if( j-1 == 0 ){
+                  jcolor = "red";
+                }
+                else if( j-1 == 1 ){
+                  jcolor = "green";
+                }
+                else if( j-1 == 2 ){
+                  jcolor = "blue";
+                }
+                
+                var kcolor = "red";
+                if( k == 0 ){
+                  kcolor = "red";
+                  subsection.append('<div class="col-md-1 col-sm-1"></div');
+                }
+                else if( k == 1 ){
+                  kcolor = "green";
+                }
+                else if( k == 2 ){
+                  kcolor = "blue";
+                }
+                
+                
+                subsection.append('<div class="col-md-3 col-sm-3 i'+(i-1)+' j'+(j-1)+' k'+k+'" style="padding:0"><svg width="36" height="30"><circle cx="6" cy="24" r="6" fill="'+icolor+'" /><circle cx="18" cy="24" r="6" fill="'+jcolor+'" /><circle cx="30" cy="24" r="6" fill="'+kcolor+'" /></svg><p>'+c+'</p></div>');
+              }
+            }
+            row.append( column );
+          }
+          container.append( row );
+        }
+        
+    });
+    </script>
+    
+    
+  </body>
+</html>
